@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hamlet Does Therapy Story</title>
+  <style>
+    :root{
+      --text:#f5f7fb;
+      --muted:#c9d2e3;
+      --accent:#cdbbff;
+      --border:rgba(255,255,255,.10);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:radial-gradient(circle at top,#34275c 0%,#171227 42%,#09070f 100%);
+    }
+    .app{min-height:100vh;display:grid;grid-template-rows:auto auto auto}
+    .scene-wrap{padding:20px 20px 10px;display:flex;justify-content:center;align-items:center}
+    .scene-card{
+      position:relative;width:min(1120px,96vw);aspect-ratio:16/9;border-radius:28px;overflow:hidden;
+      background:#06050a;border:1px solid var(--border);box-shadow:0 30px 70px rgba(0,0,0,.50);
+      display:flex;align-items:center;justify-content:center
+    }
+    .scene-bg{
+      width:100%;height:100%;object-fit:contain;object-position:center;display:block;background:#0b0913
+    }
+    .title-overlay{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(168,131,255,.26), transparent 30%),
+        radial-gradient(circle at 70% 80%, rgba(255,176,176,.12), transparent 28%),
+        linear-gradient(180deg, rgba(8,7,14,.78), rgba(9,7,14,.92));
+      text-align:center
+    }
+    .title-box{
+      width:min(760px,92%);background:rgba(14,11,22,.80);border:1px solid rgba(255,255,255,.12);
+      border-radius:28px;padding:36px 30px;box-shadow:0 18px 50px rgba(0,0,0,.35);backdrop-filter:blur(12px)
+    }
+    h1,h2,p{margin-top:0}
+    h1{
+      font-size:clamp(2rem,4vw,3.6rem);line-height:1.05;margin-bottom:14px;letter-spacing:-0.03em;font-weight:800
+    }
+    .ending-title{
+      position:absolute;left:24px;top:20px;margin:0;padding:10px 14px;border-radius:999px;
+      background:rgba(5,7,14,.72);border:1px solid rgba(255,255,255,.10);font-size:.92rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(10px)
+    }
+    .subtitle{
+      font-size:1.06rem;line-height:1.6;color:var(--muted);max-width:62ch;margin-left:auto;margin-right:auto
+    }
+    .hint{margin-top:14px;font-size:.95rem;color:#d8d2f1;opacity:.92}
+    .footer-note{
+      position:absolute;right:12px;bottom:12px;font-size:.84rem;background:rgba(0,0,0,.56);border-radius:999px;
+      padding:6px 10px;color:#eee7ff;font-family:Inter,Segoe UI,Arial,sans-serif
+    }
+    .dialog-panel{
+      background:linear-gradient(180deg,rgba(12,10,20,.98),rgba(18,14,28,.98));
+      border-top:1px solid rgba(255,255,255,.08);padding:18px 18px 24px
+    }
+    .dialog-inner{width:min(1120px,96vw);margin:0 auto}
+    .speaker{
+      color:var(--accent);font-weight:700;letter-spacing:.01em;font-size:1.02rem;margin-bottom:8px;
+      font-family:Inter,Segoe UI,Arial,sans-serif;text-transform:uppercase
+    }
+    .line{min-height:3.5em;line-height:1.55;font-size:1.12rem;white-space:pre-wrap;color:#f7f8fd}
+    .choices{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:14px;margin-top:16px}
+    .choices.single{grid-template-columns:1fr;max-width:420px}
+    .ending-actions{width:min(1120px,96vw);margin:12px auto 28px;display:flex;justify-content:center}
+    button{
+      appearance:none;border:none;cursor:pointer;border-radius:16px;padding:14px 20px;font-size:1rem;
+      font-family:Inter,Segoe UI,Arial,sans-serif;font-weight:600;color:#16111d;
+      background:linear-gradient(180deg,#f2eeff,#cfbfff);box-shadow:0 12px 30px rgba(0,0,0,.24);
+      transition:transform .12s ease,filter .12s ease
+    }
+    button:hover{transform:translateY(-1px);filter:brightness(1.04)}
+    button.secondary{background:linear-gradient(180deg,#ffd7d7,#f5b5b9)}
+    .hidden{display:none!important}
+    @media (max-width:720px){
+      .scene-wrap{padding:10px 10px 8px}
+      .choices{grid-template-columns:1fr}
+      .line{font-size:1rem;min-height:4.2em}
+      button{width:100%}
+      .ending-actions{padding:0 10px}
+      .ending-title{left:12px;top:12px;font-size:.82rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="scene-wrap">
+      <div class="scene-card">
+        <img id="sceneImage" class="scene-bg hidden" src="" alt="Scene image" />
+        <div id="titleScreen" class="title-overlay">
+          <div class="title-box">
+            <h1>Hamlet Does Therapy Story</h1>
+            <p class="subtitle">Claudius sends Hamlet to therapy because he is convinced Hamlet is insane. You are Hamlet. You're not crazy... right?</p>
+            <p class="subtitle">A choice-driven story built around your daughter’s artwork.</p>
+            <button id="startBtn">Start Story</button>
+            <p class="hint">Music starts after Start because browsers insist on having opinions.</p>
+          </div>
+        </div>
+        <h2 id="endingBadge" class="ending-title hidden">Ending</h2>
+        <div class="footer-note">Hamlet-Therapy-Game</div>
+      </div>
+    </div>
+
+    <div class="dialog-panel">
+      <div class="dialog-inner">
+        <div id="speaker" class="speaker">Narrator</div>
+        <div id="line" class="line">Click Start Story to begin.</div>
+        <div id="choices" class="choices single"></div>
+      </div>
+    </div>
+
+    <div id="endingActions" class="ending-actions hidden">
+      <button id="restartBtn">Play Again</button>
+    </div>
+  </div>
+
+  <audio id="bgMusic" src="sounds/bg_music.mp3" loop preload="auto"></audio>
+  <audio id="chairSfx" src="sounds/chair_screech.mp3" preload="auto"></audio>
+  <audio id="clipboardSfx" src="sounds/clipboard_break.mp3" preload="auto"></audio>
+  <audio id="windowSfx" src="sounds/window_open.mp3" preload="auto"></audio>
+
+  <script>
+    const sceneImage=document.getElementById("sceneImage");
+    const titleScreen=document.getElementById("titleScreen");
+    const endingBadge=document.getElementById("endingBadge");
+    const endingActions=document.getElementById("endingActions");
+    const speakerEl=document.getElementById("speaker");
+    const lineEl=document.getElementById("line");
+    const choicesEl=document.getElementById("choices");
+    const startBtn=document.getElementById("startBtn");
+    const restartBtn=document.getElementById("restartBtn");
+    const bgMusic=document.getElementById("bgMusic");
+    const chairSfx=document.getElementById("chairSfx");
+    const clipboardSfx=document.getElementById("clipboardSfx");
+    const windowSfx=document.getElementById("windowSfx");
+
+    let currentNode=null;
+    let runPlayed={chair_revenge:false,chair_escape:false,clipboard_break:false,window_open:false};
+    let bgFadeTimer=null;
+
+    function setScene(imageName){
+      if(!imageName)return;
+      sceneImage.src="images/"+imageName;
+      sceneImage.classList.remove("hidden");
+    }
+
+    function resetRunFlags(){
+      runPlayed={chair_revenge:false,chair_escape:false,clipboard_break:false,window_open:false};
+    }
+
+    function playBackground(){
+      clearTimeout(bgFadeTimer);
+      bgMusic.volume=.34;
+      const p=bgMusic.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }
+
+    function duckBackground(duration=1200){
+      clearTimeout(bgFadeTimer);
+      bgMusic.volume=.12;
+      bgFadeTimer=setTimeout(()=>bgMusic.volume=.34,duration);
+    }
+
+    function endMusic(){
+      clearTimeout(bgFadeTimer);
+      let vol=bgMusic.volume;
+      const fade=setInterval(()=>{
+        vol-=.04;
+        if(vol<=.01){
+          bgMusic.volume=0;
+          bgMusic.pause();
+          clearInterval(fade);
+        } else {
+          bgMusic.volume=vol;
+        }
+      },80);
+    }
+
+    function playSfx(audioEl,flagKey){
+      if(runPlayed[flagKey]) return;
+      runPlayed[flagKey]=true;
+      duckBackground();
+      try{
+        audioEl.currentTime=0;
+        const p=audioEl.play();
+        if(p&&p.catch)p.catch(()=>{});
+      }catch(err){}
+    }
+
+    function applyEvent(node){
+      if(!node.event) return;
+      if(node.event==="chair_revenge") playSfx(chairSfx,"chair_revenge");
+      else if(node.event==="chair_escape") playSfx(chairSfx,"chair_escape");
+      else if(node.event==="clipboard_break") playSfx(clipboardSfx,"clipboard_break");
+      else if(node.event==="window_open") playSfx(windowSfx,"window_open");
+    }
+
+    function renderChoices(node){
+      choicesEl.innerHTML="";
+      if(node.choices&&node.choices.length){
+        choicesEl.className="choices"+(node.choices.length===1?" single":"");
+        node.choices.forEach(choice=>{
+          const btn=document.createElement("button");
+          btn.textContent=choice.label;
+          if(choice.secondary) btn.classList.add("secondary");
+          btn.addEventListener("click",()=>{
+            currentNode=choice.next;
+            updateUI();
+          });
+          choicesEl.appendChild(btn);
+        });
+        return;
+      }
+      if(node.next){
+        choicesEl.className="choices single";
+        const btn=document.createElement("button");
+        btn.textContent=node.nextLabel||"Continue";
+        btn.addEventListener("click",()=>{
+          currentNode=node.next;
+          updateUI();
+        });
+        choicesEl.appendChild(btn);
+      }
+    }
+
+    function showEnding(title,text,imageName){
+      endMusic();
+      setScene(imageName);
+      endingBadge.textContent=title;
+      endingBadge.classList.remove("hidden");
+      endingActions.classList.remove("hidden");
+      choicesEl.innerHTML="";
+      choicesEl.className="choices single";
+      speakerEl.textContent="Ending";
+      lineEl.textContent=text;
+    }
+
+    function updateUI(){
+      const node=story[currentNode];
+      if(!node) return;
+      if(node.scene) setScene(node.scene);
+      speakerEl.textContent=node.speaker||"Narrator";
+      lineEl.textContent=node.text||"";
+      applyEvent(node);
+
+      if(node.ending){
+        showEnding(node.ending.title,node.ending.text,node.scene);
+        return;
+      }
+      renderChoices(node);
+    }
+
+    function startGame(){
+      resetRunFlags();
+      endingBadge.classList.add("hidden");
+      endingActions.classList.add("hidden");
+      titleScreen.classList.add("hidden");
+      playBackground();
+      currentNode="intro_0";
+      updateUI();
+    }
+
+    function restartGame(){
+      sceneImage.classList.add("hidden");
+      titleScreen.classList.remove("hidden");
+      endingBadge.classList.add("hidden");
+      endingActions.classList.add("hidden");
+      speakerEl.textContent="Narrator";
+      lineEl.textContent="Click Start Story to begin.";
+      choicesEl.innerHTML="";
+      choicesEl.className="choices single";
+      bgMusic.pause();
+      bgMusic.currentTime=0;
+      bgMusic.volume=.34;
+      resetRunFlags();
+      currentNode=null;
+    }
+
+    startBtn.addEventListener("click",startGame);
+    restartBtn.addEventListener("click",restartGame);
+
+    const story={
+      intro_0:{speaker:"Therapist",text:"It's nice to meet you, Hamlet. Tell me what's been going on.",scene:"office_neutral.png",next:"intro_1"},
+      intro_1:{speaker:"Hamlet",text:"Nothing's been going on. I don't even need to be here.",scene:"office_neutral.png",next:"intro_2"},
+      intro_2:{speaker:"Therapist",text:"If that's true, you'll be out of here in no time.",scene:"office_neutral.png",next:"intro_3"},
+      intro_3:{speaker:"Therapist",text:"I heard you're having some troubles with your friends. Tell me about it.",scene:"office_neutral.png",next:"spy_0"},
+      spy_0:{speaker:"Hamlet",text:"They're spying on me, I know it! They're telling my father everything I do.",scene:"office_surprised.png",next:"spy_1"},
+      spy_1:{speaker:"Therapist",text:"What makes you think that?",scene:"office_surprised.png",choices:[
+        {label:"Tell the truth about what you saw",next:"truth_0"},
+        {label:"Get mad that no one ever believes you",next:"mad_0",secondary:true}
+      ]},
+      truth_0:{speaker:"Therapist",text:"Hmmm... Interesting. Have you seen anything else recently?",scene:"office_neutral.png",next:"truth_1"},
+      truth_1:{speaker:"Hamlet",text:"Well, I think I've seen the ghost of my father.",scene:"office_concerned.png",next:"truth_2"},
+      truth_2:{speaker:"Therapist",text:"Hmm... tell me about that...",scene:"office_neutral.png",next:"ghost_0"},
+      ghost_0:{speaker:"Hamlet",text:"Well I've seen his ghost a few times now...",scene:"office_concerned.png",next:"ghost_1"},
+      ghost_1:{speaker:"Therapist",text:"Does he ever say anything to you?",scene:"office_concerned.png",choices:[
+        {label:"Lie: say he never speaks",next:"lie_0"},
+        {label:"Tell the truth: he speaks",next:"truthghost_0",secondary:true}
+      ]},
+      lie_0:{speaker:"Hamlet",text:"N-no... he never speaks.",scene:"office_neutral.png",next:"lie_1"},
+      lie_1:{speaker:"Therapist",text:"So he's kind of like a vision?",scene:"office_neutral.png",next:"lie_2"},
+      lie_2:{speaker:"Hamlet",text:"Exactly. I think the ghost has something to do with Claudius.",scene:"office_neutral.png",next:"lie_3"},
+      lie_3:{speaker:"Therapist",text:"What makes you think that?",scene:"office_neutral.png",next:"accuse_0"},
+      accuse_0:{speaker:"Hamlet",text:"This might sound crazy but I think Claudius killed my father.",scene:"office_surprised.png",next:"accuse_1"},
+      accuse_1:{speaker:"Therapist",text:"What made you come to that conclusion?",scene:"office_concerned.png",next:"accuse_2"},
+      accuse_2:{speaker:"Hamlet",text:"He married my mother right after my father's death. I also saw him praying and he was talking about feeling guilty.",scene:"office_neutral.png",next:"accuse_3"},
+      accuse_3:{speaker:"Therapist",text:"And you say he's been spying on you?",scene:"office_neutral.png",next:"accuse_4"},
+      accuse_4:{speaker:"Hamlet",text:"He really has, I even saw him listen while I was talking to my ex-girlfriend!",scene:"office_neutral.png",next:"turning_0"},
+      turning_0:{speaker:"Therapist",text:"Well... that is rather suspicious.",scene:"office_concerned.png",next:"turning_1"},
+      turning_1:{speaker:"Hamlet",text:"I think he's sending me to therapy to get me off his trail.",scene:"office_concerned.png",next:"turning_2"},
+      turning_2:{speaker:"Therapist",text:"If you really feel like Claudius killed your father you could file a police report.",scene:"office_neutral.png",next:"turning_3"},
+      turning_3:{speaker:"Hamlet",text:"I can do that?",scene:"office_neutral.png",next:"turning_4"},
+      turning_4:{speaker:"Therapist",text:"Yes you can. How about I help you...",scene:"office_neutral.png",next:"turning_end"},
+      turning_end:{speaker:"Narrator",text:"",scene:"ending_turningpoint.png",ending:{title:"Turning Point Ending",text:"Claudius gets arrested. Ham finishes therapy and lives a normal life."}},
+      truthghost_0:{speaker:"Hamlet",text:"He does, he speaks...",scene:"office_concerned.png",next:"truthghost_1"},
+      truthghost_1:{speaker:"Therapist",text:"Can you tell me some of the things he's said?",scene:"office_concerned.png",next:"truthghost_2"},
+      truthghost_2:{speaker:"Hamlet",text:"He told me that Claudius was the one who killed him...",scene:"office_surprised.png",next:"truthghost_3"},
+      truthghost_3:{speaker:"Therapist",text:"And how does that make you feel?",scene:"office_neutral.png",next:"truthghost_4"},
+      truthghost_4:{speaker:"Hamlet",text:"Like I want... revenge?",scene:"office_concerned.png",next:"truthghost_5"},
+      truthghost_5:{speaker:"Therapist",text:"... What kind of revenge?",scene:"office_concerned.png",next:"revenge_0"},
+      revenge_0:{speaker:"Hamlet",text:"I'm going to avenge my father just like he told me too.",scene:"office_concerned.png",next:"revenge_1"},
+      revenge_1:{speaker:"Therapist",text:"Hamlet, don't you think that's a bit drastic?",scene:"office_concerned.png",next:"revenge_2"},
+      revenge_2:{speaker:"Hamlet",text:"Its not drastic, its justice, Claudius killed my father he should face the consequences!",scene:"office_concerned.png",next:"revenge_3"},
+      revenge_3:{speaker:"Narrator",text:"He stands up feeling frustrated.",scene:"office_surprised.png",event:"chair_revenge",next:"revenge_4"},
+      revenge_4:{speaker:"Therapist",text:"Hamlet please sit down... Are you certain you even want to believe this \"ghost\".",scene:"office_surprised.png",next:"revenge_5"},
+      revenge_5:{speaker:"Hamlet",text:"No I wont sit down! I saw the ghost with my own eyes, heard it with my own ears! Why don't you believe me?",scene:"office_surprised.png",next:"delulu_0"},
+      delulu_0:{speaker:"Therapist",text:"Lets just calm down Hamlet. Theres no need to yell...",scene:"office_surprised.png",next:"delulu_1"},
+      delulu_1:{speaker:"Hamlet",text:"Ughh! I'm so tired of all of this!",scene:"office_scared.png",next:"delulu_2"},
+      delulu_2:{speaker:"Narrator",text:"You grab the therapist's clip board.",scene:"clipboard_unbroken.png",next:"delulu_3"},
+      delulu_3:{speaker:"Narrator",text:"Crack.",scene:"clipboard_broken.png",event:"clipboard_break",next:"delulu_4"},
+      delulu_4:{speaker:"Therapist",text:"Security please come to room 346, there an unstable patient...",scene:"clipboard_broken.png",next:"delulu_5"},
+      delulu_5:{speaker:"Hamlet",text:"I'm not unstable! I saw him, I heard him!",scene:"office_scared.png",next:"delulu_end"},
+      delulu_end:{speaker:"Narrator",text:"",scene:"ending_delulu.png",ending:{title:"Certified Delulu Bad Ending",text:"You were schizophrenic. You were taken to a mental facility."}},
+      mad_0:{speaker:"Therapist",text:"I'm not saying I don't believe you. It just seems unlikely.",scene:"office_neutral.png",next:"mad_1"},
+      mad_1:{speaker:"Hamlet",text:"Maybe you're spying on me too. Are you talking to Claudius.",scene:"office_neutral.png",next:"trust_0"},
+      trust_0:{speaker:"Therapist",text:"No of course not. Everything you say stays with me.",scene:"office_neutral.png",next:"trust_1"},
+      trust_1:{speaker:"Hamlet",text:"Sure Right...",scene:"office_neutral.png",next:"trust_2"},
+      trust_2:{speaker:"Therapist",text:"Anyways... Could you tell me a little about your home life?",scene:"office_neutral.png",next:"trust_3"},
+      trust_3:{speaker:"Hamlet",text:"Well, my uncle Claudius married my mother right after my fathers death.",scene:"office_neutral.png",next:"trust_4"},
+      trust_4:{speaker:"Therapist",text:"And how do you feel about that?",scene:"office_neutral.png",next:"trust_5"},
+      trust_5:{speaker:"Hamlet",text:"It makes me feel rather lonely.",scene:"office_concerned.png",next:"trust_6"},
+      trust_6:{speaker:"Therapist",text:"Maybe you should change up your life a little. Have you ever considered going to college?",scene:"office_neutral.png",next:"trust_7"},
+      trust_7:{speaker:"Hamlet",text:"S-Send me to college???",scene:"office_neutral.png",next:"trust_8"},
+      trust_8:{speaker:"Narrator",text:"You stand up.",scene:"office_neutral.png",event:"chair_escape",next:"trust_9"},
+      trust_9:{speaker:"Therapist",text:"What's wrong Hamlet? You look troubled.",scene:"office_concerned.png",next:"trust_10"},
+      trust_10:{speaker:"Hamlet",text:"You are talking to my father! He wants to send me away too!",scene:"office_surprised.png",next:"escape_0"},
+      escape_0:{speaker:"Narrator",text:"The window catches your eye.",scene:"window_closed.png",next:"escape_1"},
+      escape_1:{speaker:"Narrator",text:"You open the window.",scene:"window_open.png",event:"window_open",next:"escape_2"},
+      escape_2:{speaker:"Therapist",text:"What on earth are you doing?",scene:"window_open.png",next:"escape_3"},
+      escape_3:{speaker:"Hamlet",text:"Leaving. I can't trust anyone...",scene:"window_open.png",next:"escape_end"},
+      escape_end:{speaker:"Narrator",text:"",scene:"ending_ontherun.png",ending:{title:"On the Run Ending",text:"You flee the country to escape all your problems."}}
+    };
+  </script>
+</body>
+</html>
